@@ -44,5 +44,13 @@
     "fs-extra": "^9.0.1",
     "node-fetch": "^2.6.1",
     "react-snap": "^1.23.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "postcss-safe-parser>postcss": "^8.4.31"
+    }
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
