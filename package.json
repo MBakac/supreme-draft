@@ -52,5 +52,9 @@
   },
   "engines": {
     "node": "20.x"
+  },
+  "overrides": {
+    "postcss": "8.4.31",
+    "postcss-safe-parser": "5.0.2"
   }
 }
