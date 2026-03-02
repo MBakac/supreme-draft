@@ -28,17 +28,19 @@ class Deckbuilder extends React.Component {
   }
 
   moveToDeck(name) {
-    let removedIndex = this.state.sideboard.findIndex(card => card.name == name)
-    let _name = name
+    let removedIndex = this.state.sideboard.findIndex(card => card.name === name)
+    let card = this.state.sideboard[removedIndex]
+    let displayName = name
     if (Object.keys(this.basics).includes(name)) {
-      _name += " // " + Date.now().toString()
+      displayName = name + " // " + Date.now().toString()
     }
     this.setState({
       cards: [...this.state.cards, {
-        ...this.state.sideboard.filter(card => card.name == name)[0],
-        name: _name
+        ...card,
+        name: displayName,
+        imageName: name  // keep original for image lookup
       }],
-      sideboard: this.state.sideboard.filter((card, index) => index != removedIndex)
+      sideboard: this.state.sideboard.filter((_, index) => index !== removedIndex)
     }, this.fixBasicLands)
   }
 
@@ -50,12 +52,23 @@ class Deckbuilder extends React.Component {
     }, this.fixBasicLands)
   }
 
+  exportDeck() {
+    const mainboard = this.state.cards.map(c => `1 ${c.name.split(' // ')[0]}`).join('\n')
+    const sideboard = this.state.sideboard
+      .filter(c => !Object.keys(this.basics).includes(c.name))
+      .map(c => `1 ${c.name}`)
+      .join('\n')
+    navigator.clipboard.writeText(`${mainboard}\n\nSideboard:\n${sideboard}`)
+    alert('Deck copied to clipboard!')
+  }
+
   render() {
     return (
       <div className="Deckbuilder">
         <div className="Deckbuilder-section">
           Click a card to switch it from your mainboard to your sideboard.
         </div>
+        <button className="exportButton" onClick={this.exportDeck.bind(this)}>Export to clipboard</button>
         <div className="Deckbuilder-section Deckbuilder-deck">
           <div className="Deckbuilder-large">Mainboard ({this.state.cards.length} cards):</div>
           <Pool cards={this.state.cards} onClick={this.moveToSideboard.bind(this)} />

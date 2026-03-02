@@ -34,9 +34,13 @@ class Pack extends React.Component {
     return (
       <div className="Pack">
         {
-          this.props.cards.map((card, index) =>
-            <CubeCard onClick={e => this.pick(index)} key={index} name={card.name} style={{opacity: this.state.picks.includes(index) ? '0.5' : '1.0'}}/>
-          )
+          this.props.cards.map((card, index) => {
+            if (!card) {
+              console.error(`Undefined card at index ${index}`)
+              return null
+            }
+            return <CubeCard onClick={e => this.pick(index)} key={index} name={card.name} style={{opacity: this.state.picks.includes(index) ? '0.5' : '1.0'}}/>
+          })
         }
       </div>
     )

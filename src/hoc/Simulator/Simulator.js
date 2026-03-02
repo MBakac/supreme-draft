@@ -23,7 +23,7 @@ class Simulator extends React.Component {
         {
           this.state.drafting
           ?
-            <SupremeDraft packs={18} onDone={(picks) => {
+            <SupremeDraft packs={23} onDone={(picks) => {
               this.setState({
                 cards: picks,
                 drafting: false

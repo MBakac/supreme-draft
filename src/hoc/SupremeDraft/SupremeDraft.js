@@ -24,6 +24,7 @@ class SupremeDraft extends React.Component {
   }
 
   onPicks(picks) {
+    console.log("in onPicks")
     this.setState({
       packs: this.state.packs.slice(1),
       picks: [...this.state.picks, ...(picks.map(index => this.state.packs[0][index]))]

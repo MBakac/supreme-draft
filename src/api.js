@@ -76,29 +76,50 @@ export async function getLatestCard(cardName) {
   return card
 }
 
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 export async function generateCubePacks(number) {
-  let cubeFile = await (await fetch(process.env.PUBLIC_URL + '/data/MTGOVintageCube.txt')).text()
+  let cubeFile = await (await fetch(process.env.PUBLIC_URL + '/data/mtgo_chris_wolfs_vintage_supreme_draft.txt')).text()
   let data = await (await fetch(process.env.PUBLIC_URL + '/data/cube.json')).json()
-
-  // console.log(cubeFile)
-  let cards = cubeFile.split('\n').filter(card=>card)
+  
+  let cards = cubeFile.split('\n').filter(card => card)
+  // shuffle once
+  shuffle(cards)
+  
   let packs = []
-
+  let cardIndex = 0
+  
   for (let i = 0; i < number; i++) {
     packs.push([])
-    let removed = []
+    let packNames = new Set()
+    let tempIndex = cardIndex
+    
     for (let j = 0; j < 15; j++) {
-      let chosenIndex = Math.floor(Math.random() * cards.length)
-      let name = cards[chosenIndex]
-      // let set = await getLatestSet(name)
-      // packs[i].push(await getLatestCard(name))
+      let name = cards[tempIndex++]
+      if (!name) break
+      
+      if (packNames.has(name)) {
+        j-- // don't count this slot, try next card
+        continue
+      }
+      
+      packNames.add(name)
+      if (!data[name]) {
+        console.warn("FAILED FOR", name, "| charCodes:", [...name].map(c => c.charCodeAt(0)))
+        j-- // don't waste a pack slot
+        continue
+      }
+      console.log(name)
       packs[i].push(data[name])
-      removed.push(name)
-      cards.splice(chosenIndex, 1)
     }
-    // put the cards back in the cube
-    cards = [...cards, ...removed]
+    cardIndex = tempIndex
   }
-
+  
   return packs
 }
